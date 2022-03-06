@@ -1,45 +1,40 @@
 const express = require("express")
 const mongoose = require('mongoose')
-const {User} = require('./models/user')
+const session = require('express-session')
+const passport = require('passport')
+const dotenv = require('dotenv')
+const { ensureLoggedIn } = require('connect-ensure-login')
+const MongoStore = require("connect-mongo");
+dotenv.config()
 
+const authRouter = require('./auth').router
+
+const secretKey = process.env.secretKey
 const app = express()
 const PORT = 3000;
+const mongoUrl = 'mongodb://localhost/backend1-uppgift'
 
-app.use(express.urlencoded())
+app.use(express.urlencoded({extended: true}))
+
+app.use(session({
+  secret: secretKey,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({mongoUrl})
+}))
 
 
-app.post('/signup', async (req, res) => {
-  const users = new User(req.body)
-  try {
-    await users.save()
-    res.redirect('/login')
-  } catch(error) {
-  res.send(error)
-  }
+app.use(passport.authenticate('session'))
 
-})
-app.get("/signup", (req, res) => {
-    res.render("signup.ejs")
-  });
+app.use('/auth', authRouter)
 
-app.post('/login', async (req,res) => {
-  console.log('Hej')
-  const username = req.body.username
-  const password = req.body.password
-  const user = await User.findOne({username: username, password: password})
-  console.log(user)
-  res.redirect('/posts')
-  res.end()
-  
-})
-app.get("/login", (req, res) => {
-  res.render("login.ejs")
-});
 
-app.get('/posts', (req, res) => {
+app.get('/posts', ensureLoggedIn("/auth/login"), (req, res) => {
   res.render('posts.ejs')
 })
-mongoose.connect('mongodb://localhost/backend1-uppgift')
+
+
+mongoose.connect(mongoUrl)
 app.listen(PORT, () => {
   console.log(`Started Express server on port ${PORT}`)
 });
