@@ -5,12 +5,28 @@
     <title>Posts</title>
 </head>
 <body>
+    <a href="/auth/logout">Log out</a>
+
+    <form method="POST" action="/posts">
+        Name: <input name="name" type="name"><br>
+        Email: <input name="email" type="email"><br>
+        Profile Photo: <input name="profilePhoto" type="file">
+        <input type="submit" value="Update">
+    </form>
+
+    <% infos.forEach(profileInfo => { %>
+        <div>
+            <img src="<% profileInfo.profilePhoto %>">
+            <h1>Welcome <%= profileInfo.name %></h1>
+            <p><%= profileInfo.email %></p>
+        </div>
+    <% }) %>
+
     <h1>Create Post</h1>
     <form method="POST" action="/posts">
         <textarea name="text" placeholder="What's new?"></textarea>
         <button type="submit">Post</button>
     </form>
-
-    <a href="/auth/logout">Log out</a>
+    
 </body>
 </html>
