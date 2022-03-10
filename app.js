@@ -7,6 +7,7 @@ const { ensureLoggedIn } = require('connect-ensure-login')
 const MongoStore = require("connect-mongo");
 const multer = require('multer')
 const path = require('path')
+const fs = require('fs')
 dotenv.config()
 
 // const {ProfileInfo} = require('./models/profileInfo')
@@ -31,8 +32,6 @@ app.use(session({
   store: MongoStore.create({mongoUrl})
 }))
 
-app.use(upload.single('uploaded-file'))
-
 app.use(passport.authenticate('session'))
 
 app.use('/auth', authRouter)
@@ -40,22 +39,24 @@ app.use('/auth', authRouter)
 // app.use('/page', pageRouter)
 
 app.get('/posts', ensureLoggedIn("/auth/login"), async (req, res) => {
-  const infos = await User.find({email: req.body.email})
-  res.render('posts.ejs', {infos})
+  console.log(req.user)
+  const user = await User.findOne({username: req.user.username})
+  // var img = fs.readFileSync(user.profilePhoto)
+  // var encode_img = img.toString('base64')
+  // console.log(encode_img)
+  // res.render('posts.ejs', {user, img: encode_img})
+  res.render('posts.ejs', {user})
 })
 
-// KOLLA LEKTION 4
-app.post('/posts', upload.single('files'), async (req,res) => {
+app.post('/posts', ensureLoggedIn('/auth/login'), upload.single('profilePhoto'), async (req,res) => {
+  console.log('body', req.body)
   const {name, email} = req.body
-  const profilePhoto = new User({profilePhoto})
+  const profilePhoto = req.file
+  const {username} = req.user
 
-  const photoPath = req.file.path
-  profilePhoto = fs.readFileSync(photoPath)
-  // const profilePhoto = User.profilePhoto.data = fs.readFileSync(photoPath)
-  User.profilePhoto.contentType = 'image/jpg'
-
-  const profileInfo = new User({name, email, profilePhoto})
-  await profileInfo.save()
+  const user = await User.findOne({username})
+  await user.updateOne({name, email, profilePhoto: profilePhoto.path})
+  // await profileInfo.save()
   res.redirect('/posts')
 })
 
