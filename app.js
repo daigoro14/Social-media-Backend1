@@ -16,7 +16,7 @@ const {User} = require('./models/user')
 const upload = multer({dest: 'uploads'})
 
 const authRouter = require('./auth').router
-// const pageRouter = require('./page').router
+const pageRouter = require('./page').router
 
 const secretKey = process.env.secretKey
 const app = express()
@@ -34,32 +34,11 @@ app.use(session({
 
 app.use(passport.authenticate('session'))
 
+// app.use(express.static("styles"))
+
 app.use('/auth', authRouter)
 
-// app.use('/page', pageRouter)
-
-app.get('/posts', ensureLoggedIn("/auth/login"), async (req, res) => {
-  console.log(req.user)
-  const user = await User.findOne({username: req.user.username})
-  // var img = fs.readFileSync(user.profilePhoto)
-  // var encode_img = img.toString('base64')
-  // console.log(encode_img)
-  // res.render('posts.ejs', {user, img: encode_img})
-  res.render('posts.ejs', {user})
-})
-
-app.post('/posts', ensureLoggedIn('/auth/login'), upload.single('profilePhoto'), async (req,res) => {
-  console.log('body', req.body)
-  const {name, email} = req.body
-  const profilePhoto = req.file
-  const {username} = req.user
-
-  const user = await User.findOne({username})
-  await user.updateOne({name, email, profilePhoto: profilePhoto.path})
-  // await profileInfo.save()
-  res.redirect('/posts')
-})
-
+app.use('/page', pageRouter)
 
 mongoose.connect(mongoUrl)
 app.listen(PORT, () => {
