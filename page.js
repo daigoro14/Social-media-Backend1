@@ -11,6 +11,7 @@ const fs = require('fs')
 const router = express.Router()
 
 const {User} = require('./models/user')
+const {PostEntry} = require('./models/posts')
 const { localsName } = require('ejs')
 
 // const upload = multer({dest: 'uploads'})
@@ -38,7 +39,7 @@ const storage = multer.diskStorage({
     res.render('profile.ejs', {user})
   })
   router.post('/profile', upload.single('profilePhoto'), async (req,res) => {
-    // console.log('body', req.body)
+
     const {name, email} = req.body
     const {username} = req.user
   
@@ -50,21 +51,17 @@ const storage = multer.diskStorage({
 
   router.get('/posts', async (req, res) => {
     const user = await User.findOne({username: req.user.username})
-    let post = false
-    if (post) {
-        const entries = await User.find({post}) 
-        res.render('posts.ejs', {user, entries})
-    } else {
-        res.render('posts.ejs', {user})
-    }
-    
+    const entries = await PostEntry.find();
+    res.render('posts.ejs', {user, entries})
   })
   router.post('/posts', async (req, res) => {
     const {username} = await User.findOne({username: req.user.username})
-    const post = req.body
-    const entry = new User({username, post})
-    await entry.save()
-    res.redirect('/page/posts')
+    console.log(username)
+    const {post} = req.body;
+    // const user = req.user;
+    const entry = new PostEntry({post, username});
+    await entry.save();
+    res.redirect("/page/posts");
   })
 
 

@@ -15,14 +15,15 @@
             <textarea maxlength="140" name="post" placeholder="What's new?"></textarea>
             <button type="submit">Post</button>
         </form>
+        <% if (locals.entries) { %>
+            <% entries.forEach(entry => { %>
+                <div>
+                    <h2><%= entry.post %></h2>
+                    <p><%= entry.date %></p>>
+                    <p>@<%= entry.username %></p>
+                </div>
+            <% }) %>
+        <% } %>
     </div>
-    <% if (locals.entries) { %>
-    <% entries.forEach(entry => { %>
-        <div>
-            <h2><%= entry.post %></h2>
-            <p><%= entry.date %></p>>
-        </div>
-    <% }) %>
-    <% } %>
 </body>
 </html>
