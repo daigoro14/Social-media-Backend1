@@ -23,6 +23,8 @@ const app = express()
 const PORT = 3000;
 const mongoUrl = 'mongodb://localhost/backend1-uppgift'
 
+app.use(express.static('public'))
+
 app.use(express.urlencoded({extended: true}))
 
 app.use(session({
@@ -34,7 +36,7 @@ app.use(session({
 
 app.use(passport.authenticate('session'))
 
-// app.use(express.static("styles"))
+app.use(express.static("styles"))
 
 app.use('/auth', authRouter)
 

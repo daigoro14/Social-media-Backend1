@@ -2,15 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/style.css">
     <title>Log in</title>
 </head>
 <body>
-    <h1>Log in!</h1>
-    <form method="POST" action="/auth/login">
-        <input type="name" name="username">
-        <input type="password" name="password">
-        <button type="submit">Login</button>
-    </form>
-    <a href="/auth/signup">Sign up</a>
+    <div id="menu">
+        <a class="menutag" href="/auth/login">Login</a>
+        <a class="menutag" href="/auth/signup">Sign up</a>
+    </div>
+    <div id="content">
+        <h1>Log in!</h1>
+        <form method="POST" action="/auth/login">
+            Username: <input type="name" name="username">
+            Password: <input type="password" name="password">
+            <button type="submit">Login</button>
+        </form>
+    </div>
 </body>
 </html>

@@ -6,21 +6,23 @@
     <title>Posts</title>
 </head>
 <body>
-    <div>
-        <a href="/page/profile">Profile</a>
-        <a href="/auth/logout">Log out</a>
-    </div>
-    
-    <br>
+    <%- include("fragments/header.ejs") %>
 
     <div id="content">
         <h1>Create Post</h1>
         <br>
-        <form method="POST" action="/posts">
-            <textarea name="text" placeholder="What's new?"></textarea>
+        <form method="POST" action="/page/posts">
+            <textarea maxlength="140" name="post" placeholder="What's new?"></textarea>
             <button type="submit">Post</button>
         </form>
     </div>
-    
+    <% if (locals.entries) { %>
+    <% entries.forEach(entry => { %>
+        <div>
+            <h2><%= entry.post %></h2>
+            <p><%= entry.date %></p>>
+        </div>
+    <% }) %>
+    <% } %>
 </body>
 </html>

@@ -7,17 +7,27 @@ const fs = require('fs')
 
 
 
+
 const router = express.Router()
 
 const {User} = require('./models/user')
+const { localsName } = require('ejs')
 
-const upload = multer({dest: 'uploads'})
+// const upload = multer({dest: 'uploads'})
 
-// passport.use(ProfileInfo.createStrategy())
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './public/images')
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + '-' + file.originalname)
+    }
+  })
+  
+  const upload = multer({ storage: storage })
 
 
-// passport.serializeUser(ProfileInfo.serializeUser())
-// passport.deserializeUser(ProfileInfo.deserializeUser())
+    router.use(express.static('public'))
 
     router.use(passport.authenticate('session'))
 
@@ -25,36 +35,36 @@ const upload = multer({dest: 'uploads'})
   
   router.get('/profile', async (req, res) => {
     const user = await User.findOne({username: req.user.username})
-    console.log(user)
-    if (user.profilePhoto) {
-        console.log('True', user.profilePhoto)
-        var img = fs.readFileSync(user.profilePhoto, 'utf-8', (err, data) => {
-            console.log(err)
-        })
-        var encode_img = img.toString('base64')
-        // console.log(encode_img)
-        res.render('profile.ejs', {user, img: encode_img})
-    } else {
-        console.log('False', user.profilePhoto)
-        res.render('profile.ejs', {user})
-    }
-
+    res.render('profile.ejs', {user})
   })
   router.post('/profile', upload.single('profilePhoto'), async (req,res) => {
-    console.log('body', req.body)
+    // console.log('body', req.body)
     const {name, email} = req.body
-    const profilePhoto = req.file
-    console.log(profilePhoto)
     const {username} = req.user
   
     const user = await User.findOne({username})
-    await user.updateOne({name, email, profilePhoto: profilePhoto.path})
+    await user.updateOne({name, email, profilePhoto: `/images/${req.file.filename}`})
     res.redirect('/page/profile')
   })
 
 
   router.get('/posts', async (req, res) => {
-    res.render('posts.ejs')
+    const user = await User.findOne({username: req.user.username})
+    let post = false
+    if (post) {
+        const entries = await User.find({post}) 
+        res.render('posts.ejs', {user, entries})
+    } else {
+        res.render('posts.ejs', {user})
+    }
+    
+  })
+  router.post('/posts', async (req, res) => {
+    const {username} = await User.findOne({username: req.user.username})
+    const post = req.body
+    const entry = new User({username, post})
+    await entry.save()
+    res.redirect('/page/posts')
   })
 
 

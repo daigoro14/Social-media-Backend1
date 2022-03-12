@@ -4,29 +4,45 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/style.css">
     <title>Profile</title>
+    <style>
+        .image-cropper {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 50%;
+            }
+
+        .img {
+        display: inline;
+        margin: 0 auto;
+        height: 200px;
+        width: 200px;
+        }
+    </style>
 </head>
 <body>
-    <div id="menu">
-        <a class="menutag" href="/page/posts">Posts</a><br>
-        <a class="menutag" href="/auth/logout">Log out</a>
-    </div>
+    
+    <%- include("fragments/header.ejs") %>
 
 
     <div id="content">
+        <h1><u>Profile</u></h1>
+        <div>
+
+
+            <img class="img image-cropper" src="<%= user.profilePhoto %>">
+
+
+            <h1>Welcome, <%= user.name %></h1>
+            <p><%= user.email %></p>
+        </div>
         <form method="POST" action="/page/profile" enctype="multipart/form-data">
-            Profile Photo: <input name="profilePhoto" type="file"><br>
+            <h2>Profile Photo:</h2> <input name="profilePhoto" type="file" multiple="multiple" accept="/image/*"><br>
             Name: <input name="name" type="name"><br>
             Email: <input name="email" type="email">
             <input type="submit" value="Update">
         </form>
-        <br>
-        <div>
-            <% if (locals.img) { %>
-            <img src="<%= img %>">
-            <% } %>
-            <h1>Welcome, <%= user.name %></h1>
-            <p><%= user.email %></p>
-        </div>
     </div>
 </body>
 </html>
