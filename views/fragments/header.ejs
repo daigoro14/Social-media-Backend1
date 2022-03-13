@@ -1,6 +1,13 @@
 <div id="menu">
     <a class="menutag" href="/page/posts">Posts</a>
-    <a class="menutag" href="/page/profile">Profile</a>
-    <a class="menutag" href="/auth/logout">Log out</a>
-    <p id="username"> Logged in as: @<%= user.username %></p>
+    <% if (!locals.user) { %>
+        <a class="menutag" href="/auth/logout">Log in</a>
+        <a class="menutag" href="/auth/signin">Sign in</a>
+    <% } %>
+
+    <% if (locals.user) { %>
+        <a class="menutag" href="/page/profile">Edit Profile</a>
+        <a class="menutag" href="/auth/logout">Log out</a>
+        <p id="username"> Logged in as: @<%= user.username %></p>
+    <% } %>
 </div>
