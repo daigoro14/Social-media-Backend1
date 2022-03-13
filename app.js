@@ -42,6 +42,9 @@ app.use('/auth', authRouter)
 
 app.use('/page', pageRouter)
 
+
+console.log()
+
 mongoose.connect(mongoUrl)
 app.listen(PORT, () => {
   console.log(`Started Express server on port ${PORT}`)

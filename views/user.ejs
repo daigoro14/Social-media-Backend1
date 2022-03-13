@@ -3,18 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/style.css">
-    <title>Posts</title>
+    <style>
+        .image-cropper {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 50%;
+            }
+
+        .img {
+        display: inline;
+        margin: 0 auto;
+        height: 200px;
+        width: 200px;
+        }
+    </style>
+    <title>User</title>
 </head>
 <body>
+
     <%- include("fragments/header.ejs") %>
 
     <div id="content">
-        <h1>Create Post</h1>
-        <br>
-        <form method="POST" action="/page/posts">
-            <textarea maxlength="140" name="post" placeholder="What's new?"></textarea>
-            <button type="submit">Post</button>
-        </form>
+        <h1><%= userProfile.user %></h1>
+
+
+
+
+        <div>
+            <img class="img image-cropper" src="<%= profileInfo[0].profilePhoto %>">
+            <h1><%= profileInfo[0].name %></h1>
+            <p><%= profileInfo[0].email %></p>
+        </div>
+
+        <h1>Posts</h1>
         <% if (locals.entries) { %>
             <% entries.forEach(entry => { %>
                     <div class="post">

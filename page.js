@@ -36,6 +36,10 @@ const storage = multer.diskStorage({
   
   router.get('/profile', async (req, res) => {
     const user = await User.findOne({username: req.user.username})
+    // const {username} = req.user
+    // const postUser = await PostEntry.find({username})
+
+    // console.log(postUser)
     res.render('profile.ejs', {user})
   })
   router.post('/profile', upload.single('profilePhoto'), async (req,res) => {
@@ -45,24 +49,59 @@ const storage = multer.diskStorage({
   
     const user = await User.findOne({username})
     await user.updateOne({name, email, profilePhoto: `/images/${req.file.filename}`})
+
+    // const postUser = await PostEntry.find({username})
+
+    // console.log(postUser)
+    // await postUser.replace({profilePhoto: user.profilePhoto})
+
     res.redirect('/page/profile')
   })
 
 
   router.get('/posts', async (req, res) => {
     const user = await User.findOne({username: req.user.username})
-    const entries = await PostEntry.find();
+    const entries = await PostEntry.find()
+    entries.sort((a, b) => {
+        const dateA = a.date
+        const dateB = b.date
+        if (dateA > dateB) {
+            return -1
+        } else if (dateA < dateB) {
+            return 1
+        } else {
+            return 0
+        }
+    })
     res.render('posts.ejs', {user, entries})
   })
   router.post('/posts', async (req, res) => {
-    const {username} = await User.findOne({username: req.user.username})
-    console.log(username)
+    const user = await User.findOne({username: req.user.username})
     const {post} = req.body;
     // const user = req.user;
-    const entry = new PostEntry({post, username});
+    const entry = new PostEntry({post, username: user.username, profilePhoto: user.profilePhoto});
     await entry.save();
     res.redirect("/page/posts");
   })
 
+  router.get('/user/:user', async (req, res) => {
+    const user = await User.findOne({username: req.user.username})
+    const userProfile = req.params
+    const profileInfo = await User.find({username: userProfile.user})
+    const entries = await PostEntry.find({username: userProfile.user})
+    entries.sort((a, b) => {
+        const dateA = a.date
+        const dateB = b.date
+        if (dateA > dateB) {
+            return -1
+        } else if (dateA < dateB) {
+            return 1
+        } else {
+            return 0
+        }
+    })
+    console.log(profileInfo[0].username)
+      res.render('user.ejs', {user, userProfile, profileInfo, entries})
+  })
 
   exports.router = router

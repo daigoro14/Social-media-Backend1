@@ -12,7 +12,7 @@ body {
     background-color: #1DA1F2;
     color: white;
     width: 100%;
-    height: 80px;
+    height: 11vh;
     display: flex;
     align-items: center;
 }
@@ -47,12 +47,13 @@ body {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    height: 100%;
+    overflow-y: scroll;
+    height: 89vh;
     text-align: center;
 }
 
-#content {
-    margin-bottom: 5px;
+#content::-webkit-scrollbar {
+    display: none;
 }
 
 form {
@@ -60,3 +61,24 @@ form {
     flex-direction: column;
     align-items: center;
 }
+
+.post {
+    width: 60%;
+    border: 1px solid rgb(211, 211, 211);
+    border-radius: 5px;
+}
+
+.profilePhoto-cropper {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+    }
+
+.postProfilePhoto {
+    display: inline;
+    margin: 0 auto;
+    height: 80px;
+    width: 80px;
+    }
